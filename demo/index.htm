@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>remark-parse test</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        body script[type="text/markdown"] {
+            display: block;
+            white-space: pre;
+            font-family: monospace;
+            background-color: lightblue;
+        }
+    </style>
+
+</head>
+<body>
+    <script type="module">
+        import process from '../dist/markdown-muncher.min.mjs'
+        
+        document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
+            process(n.textContent).then((html) => {
+                n.insertAdjacentHTML('afterend', html)
+                console.log(html)
+            })
+        })
+    </script>
+    <script type="text/markdown">
+# Hello World :)
+    </script>
+</body>
+</html>
