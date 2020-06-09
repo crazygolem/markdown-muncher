@@ -1,16 +1,27 @@
-var unified = require('unified')
-var markdown = require('remark-parse')
-var remark2rehype = require('remark-rehype')
-var html = require('rehype-stringify')
-var sanitize = require('rehype-sanitize')
+import unified from 'unified'
+import parse from 'remark-parse'
+import rehype from 'remark-rehype'
+import html from 'rehype-stringify'
+import sanitize from 'rehype-sanitize'
 
-var processor = unified()
-  .use(markdown, {commonmark: true})
-  .use(remark2rehype)
+/**
+ * Pre-configured unified instance that can be further extended at run-time,
+ * e.g. to register extra plugins.
+ */
+export let processor = unified()
+  .use(parse, { commonmark: true })
+  .use(rehype)
   .use(html)
   .use(sanitize)
 
-module.exports = function process(md) {
+/**
+ * Convert markdown to HTML.
+ *
+ * @param {String} md The markdown string to process
+ * @returns {Promise<String>} A promise resolving to the HTML string generated
+ * from the markdown input.
+ */
+export default function process(md) {
     return new Promise((res, rej) => processor.process(md, function(err, file) {
         if (err) { rej(err) }
         else { res(String(file)) }
