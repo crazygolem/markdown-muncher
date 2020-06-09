@@ -1,33 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>remark-parse test</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>markdown-muncher demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        body {
+            box-sizing: border-box;
+            padding: 0 10%;
+        }
+
         body script[type="text/markdown"] {
             display: block;
             white-space: pre;
             font-family: monospace;
-            background-color: lightblue;
+
+            padding: 0 1.5em;
+            background-color: lightyellow;
+
+            overflow-x: scroll;
+        }
+
+        body script[type="text/markdown"].rendered {
+            background-color: lightgreen;
         }
     </style>
-
-</head>
-<body>
-    <script type="module">
+    <script type="module" defer>
         import process from '../dist/markdown-muncher.min.mjs'
-        
+
         document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
             process(n.textContent).then((html) => {
-                n.insertAdjacentHTML('afterend', html)
-                console.log(html)
+                n.insertAdjacentHTML('beforebegin', html)
+                n.classList.toggle('rendered', true)
             })
         })
     </script>
+</head>
+<body>
     <script type="text/markdown">
-# Hello World :)
+# markdown-muncher demo page
+
+**markdown-muncher** is a bundled version of remark-parse and rehype for modern
+browsers, ready to munch your pages' markdown.
+
+A [rollup] pipeline is used to bundle, optimize and export everything as a
+single-file ES6 module (*ESM*), converting the the original sources that were
+initially written in CommonJS (*CJS*) for Node.
+
+To make this demo work, generate the bundle with:
+
+    npm install
+    npm run build
+
+Then start a webserver at the project's root and open the `demo/` directory in
+your browser.
+
+The formatted content of this page has been generated from the Markdown below:
+<!--
+    If you see that comment after "the Markdown below", you are already reading
+    "the Markdown below". Look up.
+-->
+
+
+[rollup]: https://rollupjs.org
     </script>
 </body>
 </html>

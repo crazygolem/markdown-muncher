@@ -9,7 +9,7 @@ import sanitize from 'rehype-sanitize'
  * e.g. to register extra plugins.
  */
 export let processor = unified()
-  .use(parse, { commonmark: true })
+  .use(parse, { commonmark: true, gfm: true })
   .use(rehype)
   .use(html)
   .use(sanitize)
