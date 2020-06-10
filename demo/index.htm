@@ -41,11 +41,11 @@
     <script type="text/markdown">
 # markdown-muncher demo page
 
-**markdown-muncher** is a bundled version of remark-parse and rehype for modern
-browsers, ready to munch your pages' markdown.
+**markdown-muncher** is a bundled version of remark-parse[^1] and rehype for
+modern browsers, ready to munch your pages' markdown.
 
 A [rollup] pipeline is used to bundle, optimize and export everything as a
-single-file ES6 module (*ESM*), converting the the original sources that were
+single-file ES6 module (*ESM*), converting the original sources that were
 initially written in CommonJS (*CJS*) for Node.
 
 To make this demo work, generate the bundle with:
@@ -56,13 +56,18 @@ To make this demo work, generate the bundle with:
 Then start a webserver at the project's root and open the `demo/` directory in
 your browser.
 
-The formatted content of this page has been generated from the Markdown below:
+The formatted content of this page has been generated from the highlighted
+Markdown below.
 <!--
-    If you see that comment after "the Markdown below", you are already reading
-    "the Markdown below". Look up.
+    If you see this comment you are already reading the source Markdown.
+    Look Up!
 -->
 
 
+[^1]: As of June, 2020, a new implementation is in the pipes (cf.
+      [#439][cmsm-annoucement]) but there have been no release yet.
+
+[cmsm-annoucement]: https://github.com/remarkjs/remark/issues/439
 [rollup]: https://rollupjs.org
     </script>
 </body>

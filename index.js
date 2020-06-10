@@ -1,5 +1,6 @@
 import unified from 'unified'
 import parse from 'remark-parse'
+import footnotes from 'remark-footnotes'
 import rehype from 'remark-rehype'
 import html from 'rehype-stringify'
 import sanitize from 'rehype-sanitize'
@@ -10,6 +11,7 @@ import sanitize from 'rehype-sanitize'
  */
 export let processor = unified()
   .use(parse, { commonmark: true, gfm: true })
+  .use(footnotes, { inlineNotes: true })
   .use(rehype)
   .use(html)
   .use(sanitize)
