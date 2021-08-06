@@ -1,4 +1,4 @@
-import unified from 'unified'
+import { unified } from 'unified'
 import parse from 'remark-parse'
 import gfm from 'remark-gfm'
 import footnotes from 'remark-footnotes'

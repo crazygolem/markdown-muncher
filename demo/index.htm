@@ -27,7 +27,7 @@
         }
     </style>
     <script type="module" defer>
-        import process from '../dist/markdown-muncher.min.mjs'
+        import process from '../dist/markdown-muncher.mjs'
 
         document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
             process(n.textContent).then((html) => {
