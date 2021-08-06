@@ -14,11 +14,11 @@ export default [{
   },
   plugins: [commonjs(), nodepolyfills(), resolve({ preferBuiltins: false }), json()],
 }, {
-  input: 'index.js',
+  input: 'dist/markdown-muncher.mjs',
   output: {
     file: 'dist/markdown-muncher.min.mjs',
     format: 'es',
     compact: true,
   },
-  plugins: [commonjs(), nodepolyfills(), resolve({ preferBuiltins: false }), json(), closure()],
+  plugins: [closure()],
 }];
