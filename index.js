@@ -31,3 +31,14 @@ export default function process(md) {
         else { res(String(file)) }
     }))
 }
+
+import { inspectNoColor } from 'unist-util-inspect'
+export function ast(md) {
+  let tree = unified()
+    .use(parse)
+    .use(gfm)
+    .use(footnotes, { inlineNotes: true })
+    .parse(md)
+
+  return inspectNoColor(tree)
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>markdown-muncher demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            box-sizing: border-box;
+            padding: 0 10%;
+        }
+
+        body script[type="text/markdown"] {
+            display: block;
+            white-space: pre;
+            font-family: monospace;
+
+            padding: 0 1.5em;
+            background-color: lightyellow;
+
+            overflow-x: scroll;
+        }
+
+        body script[type="text/markdown"].rendered {
+            background-color: lightgreen;
+        }
+    </style>
+    <script type="module" defer>
+        import { ast } from '../dist/markdown-muncher.mjs'
+
+        document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
+            n.insertAdjacentHTML('beforebegin', '<pre>' + ast(n.textContent) + '</pre>')
+            n.classList.toggle('rendered', true)
+        })
+    </script>
+    <script type="module" defer>
+        import process from '../dist/markdown-muncher.mjs'
+
+        document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
+            process(n.textContent).then((html) => {
+                n.insertAdjacentHTML('beforebegin', html)
+                n.classList.toggle('rendered', true)
+            })
+        })
+    </script>
+</head>
+<body>
+    <script type="text/markdown">
+FN1[^2]
+
+FNI^[`FNI` Inline footnote]
+
+FNL[^word]
+
+FN2[^1]
+
+[^1]: `FN2` numeric label "1"
+[^2]: `FN1` numeric label "2"
+[^word]: `FNL` non-numeric label "word"
+[^3]: Unused footnote label
+    </script>
+</body>
+</html>
