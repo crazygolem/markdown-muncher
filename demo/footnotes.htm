@@ -27,7 +27,7 @@
         }
     </style>
     <script type="module" defer>
-        import { ast } from '../dist/markdown-muncher.mjs'
+        import { ast } from '../dist/markdown-muncher.min.mjs'
 
         document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
             n.insertAdjacentHTML('beforebegin', '<pre>' + ast(n.textContent) + '</pre>')
