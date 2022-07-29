@@ -1,4 +1,4 @@
-import commonjs from '@rollup/plugin-commonjs'            // Remark is written in CJS
+import commonjs from '@rollup/plugin-commonjs'            // Remark depends on some CJS libraries
 import nodepolyfills from 'rollup-plugin-polyfill-node'   // Browser polyfills for node builtins
 import resolve from '@rollup/plugin-node-resolve'         // Resolve node dependencies from node_modules
 import json from '@rollup/plugin-json'                    // Convert .json files to ES6 modules
@@ -10,7 +10,7 @@ export default [{
   output: {
     file: 'dist/markdown-muncher.mjs',
     format: 'es',
-    compact: true,
+    compact: false,
   },
   plugins: [commonjs(), nodepolyfills(), resolve({ preferBuiltins: false }), json()],
 }, {
