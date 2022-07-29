@@ -1,7 +1,6 @@
 import { unified } from 'unified'
 import parse from 'remark-parse'
 import gfm from 'remark-gfm'
-import footnotes from 'remark-footnotes'
 import rehype from 'remark-rehype'
 import html from 'rehype-stringify'
 import sanitize from 'rehype-sanitize'
@@ -13,7 +12,6 @@ import sanitize from 'rehype-sanitize'
 export let processor = unified()
   .use(parse)
   .use(gfm)
-  .use(footnotes, { inlineNotes: true })
   .use(rehype)
   .use(html)
   .use(sanitize)
@@ -37,7 +35,6 @@ export function ast(md) {
   let tree = unified()
     .use(parse)
     .use(gfm)
-    .use(footnotes, { inlineNotes: true })
     .parse(md)
 
   return inspectNoColor(tree)
