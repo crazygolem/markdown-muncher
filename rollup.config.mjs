@@ -2,8 +2,7 @@ import commonjs from '@rollup/plugin-commonjs'            // Remark depends on s
 import nodepolyfills from 'rollup-plugin-polyfill-node'   // Browser polyfills for node builtins
 import resolve from '@rollup/plugin-node-resolve'         // Resolve node dependencies from node_modules
 import json from '@rollup/plugin-json'                    // Convert .json files to ES6 modules
-
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'                // Minifier
 
 export default [{
   input: 'index.js',
