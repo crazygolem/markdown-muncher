@@ -22,6 +22,7 @@
     "rollup": "^3.11.0",
     "unified-stream": "^2.0.0",
     "unified": "^10.1.2",
-    "unist-util-inspect": "^7.0.1"
+    "unist-util-inspect": "^7.0.1",
+    "unist-util-visit": "^4.1.2"
   }
 }
