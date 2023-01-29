@@ -1,12 +1,61 @@
 import { visit } from 'unist-util-visit'
 
+/**
+ * @typedef {import('unified').Transformer} Transformer
+ * @typedef {import('unist-util-visit').Test} NodeTest
+ * @typedef {import('hast').Element}
+ * @typedef {import('hast').Parent}
+ *
+ * @callback PropertyTest
+ * @param {string} key
+ *   The property's name as it appears in the node's `data` property.
+ * @param {any} value
+ *   The property's value.
+ * @returns {boolean}
+ *   Returns `true` iff the property should be processed.
+ *
+ * @callback TagTest
+ *   Check for an arbitrary element, with an interface that is similar to
+ *   `NodeTest` but with an extra first parameter that accepts the element's
+ *   tag name for convenience.
+ * @param {string} tag
+ *   The element's tag name.
+ * @param {Element} element
+ *   The full element, which can be useful to implement complex rules.
+ * @param {number?} index
+ *   The element's position in its parent.
+ * @param {Parent?} parent
+ *   The element's parent.
+ *
+ * @typedef Options
+ *   Configuration (optional)
+ * @property {object} filter
+ * @property {NodeTest} filter.node
+ *   A [unist-util-is]-compatible test applied on each HAST node of the tree.
+ *   By default all elements are matched.
+ *   Use the exported `tag` function to create tag-based node filters.
+ * @property {string | RegExp | PropertyTest | Array} filter.data
+ *   A test applied on each property name of a matched node's `data` property.
+ *   By default, none are matched: they have to be explicitly allowed when
+ *   setting up the plugin.
+ *   - When `string`, checks if the property's name matches.
+ *   - When `regexp`, checks if the expression matches the property's name.
+ *   - When `function`, checks if the function passed the property name and
+ *     property value is true.
+ *   - When `boolean`, always of never passes based on the filter's value.
+ *   - When `array`, checks if one of the subtest is true.
+ *
+ *
+ * [unist-util-is]: https://github.com/syntax-tree/unist-util-is
+ */
+
 
 /**
- * Returns the argument as a `data-*` property name if it already follows the
- * naming rules and is just missing the prefix.
+ * Returns the argument as an HTML `data-*` attribute name if it already follows
+ * the naming rules and is just missing the prefix.
  *
- * The rules are a bit weird and depending on where you look not entirely
- * consistent.
+ * The rules are a bit weird and depending on where you look they seem not
+ * entirely consistent.
  *
  * From [whatwg]:
  *
@@ -28,9 +77,10 @@ import { visit } from 'unist-util-visit'
  * [whatwg]: https://html.spec.whatwg.org/multipage/dom.html#attr-data-*
  * [mdn]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/data-*
  *
- * @param {string} attr an attribute name
- * @returns A `data-*` attribute name if the argument is already a valid
- * attribute name, otherwise `undefined`.
+ * @param {string} attr An attribute name
+ * @returns
+ *   A `data-*` attribute name if the argument is already a valid attribute
+ *   name, otherwise `undefined`.
  */
 function asDataAttr(attr) {
     if (/^[a-z_]/.test(attr) && !/[^a-z0-9_.-]/.test(attr) && !/^xml/.test(attr)) {
@@ -39,8 +89,8 @@ function asDataAttr(attr) {
 }
 
 /**
- * Returns the argument as a HAST element property name if it already follows
- * the naming rules for javascript variable names, adding the `data` prefix.
+ * Returns the argument as a DOM property name if it already follows the naming
+ * rules for javascript variable names, adding the `data` prefix.
  *
  * Note that some property names that could in principle be turned into a valid
  * `data-*` attribute name (cf. [mdn]) are not accepted.
@@ -48,9 +98,10 @@ function asDataAttr(attr) {
  *
  * [mdn]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset#name_conversion
  *
- * @param {string} prop a property name
- * @returns A property name with the extra `data` prefix if the argument is
- * already well-formed, otherwise `undefined`.
+ * @param {string} prop A property name
+ * @returns
+ *   A property name with the extra `data` prefix if the argument is already
+ *   well-formed, otherwise `undefined`.
  */
 function asDataProp(prop) {
     if (/^[A-Za-z_]/.test(prop) && !/[^\w]/.test(prop)) {
@@ -59,20 +110,59 @@ function asDataProp(prop) {
 }
 
 /**
- * Converts a well-formed attribute name to the corresponding property name.
- *
- * The general algorithm is described on [mdn], except that for this method, the
- * `data` prefix is not removed (as it is needed on the HAST node).
- *
- *
- * [mdn]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset#name_conversion
- *
- * @param {string|undefined} attr a well-formed attribute name
- * @returns the corresponding property name, or `undefined` if the argument is
- * nullish.
+ * Applies a user-specified data filter.
  */
-function toProp(attr) {
-    return attr?.toLowerCase().replace(/-([a-z])/g, (_, c) => c.toUpperCase())
+function shouldFilterData(filter, key, val) {
+    if (typeof filter === 'boolean' || filter instanceof Boolean) {
+        return Boolean(filter)
+    }
+    if (typeof filter === 'string' || filter instanceof String) {
+        return filter == key
+    }
+    if (filter instanceof RegExp) {
+        return filter.test(key)
+    }
+    if (filter instanceof Function) {
+        return Boolean(filter(key, val))
+    }
+    if (filter instanceof Array) {
+        return filter.some(flt => shouldFilterData(flt, key, val))
+    }
+}
+
+/**
+ * Convenience method to easily create a node filter that matches elements by
+ * their tag name.
+ *
+ * @param {string | RegExp | TagTest | Array} filter
+ *   A test applied on node of type 'element'.
+ *   - When `string`, checks if the tag name is equal to the filter.
+ *   - When `regexp`, checks if the expression matches the tag name.
+ *   - When `function`, checks if the function passed the tag name is true.
+ *     Extra arguments matching `NodeTest`'s interface are passed to allow
+ *     the implementation of complex rules.
+ *   - When `boolean`, always of never passes based on the filter's value.
+ *   - When `array`, checks if any of the subtest passes.
+ * @returns {NodeTest}
+ *   An node filter that applies on elements based on their tag name.
+ */
+export function tag(filter) {
+    const isElt = node => node.type === 'element'
+    if (typeof filter === 'boolean' || filter instanceof Boolean) {
+        return (n, ...rs) => isElt(n) && filter
+    }
+    if (typeof filter === 'string' || filter instanceof String) {
+        return (n, ...rs) => isElt(n) && n.tagName === filter
+    }
+    if (filter instanceof RegExp) {
+        return (n, ...rs) => isElt(n) && filter.test(n.tagName)
+    }
+    if (filter instanceof Function) {
+        return (n, ...rs) => isElt(n) && Boolean(filter(n.tagName, n, ...rs))
+    }
+    if (filter instanceof Array) {
+        return (n, ...rs) => filter.some(flt => tag(flt)(n, ...rs))
+    }
 }
 
 /**
@@ -85,33 +175,54 @@ function toProp(attr) {
  * [source]: https://github.com/syntax-tree/mdast-util-to-hast/blob/main/lib/handlers/code.js
  * [discussion]: https://github.com/orgs/remarkjs/discussions/1026#discussioncomment-3370414
  *
- * @param {*} options
- * @returns A HAST transformer
+ * @param {Options?} options The options for this plugin.
+ * @returns {Transformer}
+ *   A HAST transformer.
  */
 export default function dataToProperties(options) {
     return (tree, file) => {
-        visit(tree, options?.filter?.element ?? 'element', (node) => {
+        visit(tree, options?.filter?.node ?? 'element', (node) => {
             if (!node.data)
                 return
 
             for (const [key, val] of Object.entries(node.data)) {
-                // By default no attribute is moved over, they have to be
-                // explicitly allowed in the configuration.
-                if (!(options?.filter?.data?.(key, val) ?? false))
+                if (!shouldFilterData(options?.filter?.data, key, val))
                     continue
 
-                let prop = asDataProp(key) ?? toProp(asDataAttr(key))
+                let name = asDataAttr(key) ?? asDataProp(key)
 
-                if (!prop) {
+                if (!name) {
                     console.debug('Cannot be made into a data attribute:', key)
                     continue
                 }
 
-                node.properties[prop] = val
+                // I couldn't find a clear description in HAST's AST doc, but it
+                // seems that when generating the HTML output, if the name looks
+                // like an HTML attribute (i.e. it contains dashes), it is
+                // serialized as-is without extra validation nor sanitation,
+                // while if it looks like a property, it gets properly kebab-
+                // cased first.
+                //
+                // There is a short description in [hastscript]'s documentation,
+                // which hints to the possibility of using either for property
+                // names:
+                //
+                // > Properties
+                // > Map of properties (TypeScript type). Keys should match
+                // > either the HTML attribute name, or the DOM property name,
+                // > but are case-insensitive.
+                //
+                // In our case, the name is properly validated beforehand,
+                // either as a DOM property or as an HTML `data-*` attribute, so
+                // we should be safe.
+                //
+                //
+                // [hastscript]: https://github.com/syntax-tree/hastscript#properties-1
+                node.properties[name] = val
 
                 // Remove the consumed data attribute: we don't want duplicated
                 // data in the AST
-                delete node.data[prop]
+                delete node.data[name]
             }
 
             if (Object.keys(node.data).length == 0) {
