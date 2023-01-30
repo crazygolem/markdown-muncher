@@ -26,7 +26,7 @@ import { visit } from 'unist-util-visit'
  *   - When `regexp`, checks if the expression matches the attribute's name.
  *   - When `function`, checks if the function passed the attribute's name and
  *     value returns true.
- *   - When `true`, always passes.
+ *   - When `boolean`, always passes with `true`, never with `false`.
  *   - When `array`, checks if one of the sub-predicate is true.
  *
  *   The default configuration does not match any attribute.
@@ -127,10 +127,9 @@ export default function metaToDataset(options) {
     } = options ?? {}
 
     return (tree, vfile) => visit(tree, 'code', node => {
-        if (!node.meta)
+        // There is always lang if there is meta
+        if (!node.lang)
             return
-
-        const { attrs, rest } = parseFn(node.meta)
 
         // Documented in [mdast-util-to-hast]:
         //
@@ -138,13 +137,17 @@ export default function metaToDataset(options) {
         //
         //
         // [mdast-util-to-hast]: https://github.com/syntax-tree/mdast-util-to-hast#fields-on-nodes
-        node.data ??= {}
-        node.data.hProperties ??= {}
+        (node.data ??= {}).hProperties ??= {}
 
         // Set first, so it can be overridden if allowed by `include`
-        if (langAttr && node.lang) {
+        if (langAttr) {
             node.data.hProperties[`data-${langAttr}`] = node.lang
         }
+
+        if (!node.meta)
+            return
+
+        const { attrs, rest } = parseFn(node.meta)
 
         Object.assign(node.data.hProperties, Object.fromEntries(
             attrs
