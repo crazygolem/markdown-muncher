@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>markdown-muncher demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--
+        Disclaimer: The author of this demo page declines and and all
+        responsibility for damages to good taste and aesthetics.
+    -->
+
     <style>
         body {
             box-sizing: border-box;
@@ -25,6 +31,17 @@
         body script[type="text/markdown"].rendered {
             background-color: lightgreen;
         }
+
+        table {
+            border-collapse: collapse;
+            margin: 1em auto;
+        }
+
+        table th,
+        table td {
+            padding: 0.3em 0.5em;
+            border-bottom: 1px solid black;
+        }
     </style>
     <script type="module" defer>
         import process from '../dist/markdown-muncher.min.mjs'
@@ -35,6 +52,84 @@
                 n.classList.toggle('rendered', true)
             })
         })
+    </script>
+
+
+    <!-- Code blocks' syntax highlighting with Highlight.js -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <style>
+        /* Has lower specificity than Highligh.js', will style code blocks that
+           have not been processed, e.g. if Highlight.js fails to load for some
+           reason. The style just so happens to match the selected hljs
+           stylesheed, only the code won't be highlighted. */
+        pre code {
+            display: block;
+            overflow-x: auto;
+            padding: 1em;
+            background: #f3f3f3;
+            color: #444;
+        }
+
+        pre:has(code[data-language]) {
+            position: relative;
+        }
+
+        pre code[data-language] {
+            padding-top: 40px;
+        }
+
+        pre code[data-title] {
+            padding-bottom: 40px;
+        }
+
+        pre code[data-language]::before {
+            content: attr(data-language);
+            position: absolute; /* break out from the line numbers */
+            display: block;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 5px 0 5px 1em;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        pre code[data-title]::after {
+            position: absolute; /* break out from the line numbers */
+            display: block;
+            content: attr(data-title);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 5px 0 5px 1em;
+            font-size: small;
+            font-style: italic;
+            font-family: cursive;
+            background: rgba(0, 0, 0, 0.03);
+        }
+    </style>
+    <script type="module" defer>
+        import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/es/highlight.min.js';
+
+        hljs.configure({
+            languages: [], // disables auto detection
+        })
+
+        hljs.addPlugin({
+            'after:highlightElement': ({ el, result }) => {
+                // Set 'language' data attribute to canonical language name
+                if (result.language) {
+                    el.dataset.language = hljs.getLanguage(result.language).name
+                }
+            }
+        })
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el)
+            });
+        });
     </script>
 </head>
 <body>
@@ -71,9 +166,40 @@ The default muncher comes pre-configured with a few remark plugins to add
 support for non-standard but very common and helpful elements, like footnotes,
 tables, task list items and autolinks:
 
-| Plugin       | Description                                        |
-|--------------|----------------------------------------------------|
-| `remark-gfm` | Adds tables, tasks, autolinks, footnotes and more… |
+| Plugin                  | Description                                        |
+|-------------------------|----------------------------------------------------|
+| `remark-gfm`            | Adds tables, tasks, autolinks, footnotes and more… |
+| `mdast-code-attributes` | Generates `data-*` attributes from info string     |
+
+
+This example page is further processed by [highligh.js] to enable syntax
+highlighting of fenced code blocks, with some extra code to update the language
+slug to the full language's name in the rendered blocks' header.
+
+Below are a few examples:
+
+```js title=fibonacci
+function fib(n) {
+  return n < 2 ? n : fib(n-1) + fib(n-2)
+}
+```
+
+```lua title="bis repetita placent"
+function fib(n)
+  return n < 2 and n or fib(n - 1) + fib(n - 2)
+end
+```
+
+```yml
+%YAML 1.2
+---
+YAML: YAML Ain't Markup Language™
+
+What It Is:
+  YAML is a human-friendly data serialization
+  language for all programming languages.
+```
+
 
 [^1]: A markdown parser 100% compliant with CommonMark and still extensible;
       part of the [remark] project, itself part of the [unified] ecosystem.
@@ -81,6 +207,7 @@ tables, task list items and autolinks:
 [remark]: https://github.com/remarkjs/remark
 [rollup]: https://rollupjs.org
 [unified]: https://unifiedjs.com
+[highlight.js]: https://highlightjs.org
     </script>
 </body>
 </html>

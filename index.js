@@ -1,9 +1,10 @@
 import { unified } from 'unified'
 import parse from 'remark-parse'
 import gfm from 'remark-gfm'
+import codeAttributes from './mdhast-code-attributes.mjs'
 import rehype from 'remark-rehype'
 import html from 'rehype-stringify'
-import sanitize from 'rehype-sanitize'
+import sanitize, { defaultSchema } from 'rehype-sanitize'
 
 /**
  * Pre-configured unified instance that can be further extended at run-time,
@@ -12,9 +13,21 @@ import sanitize from 'rehype-sanitize'
 export let processor = unified()
   .use(parse)
   .use(gfm)
+  .use(codeAttributes, { include: 'title' })
   .use(rehype)
   .use(html)
-  .use(sanitize)
+  // TODO: fix and re-enable sanitization (removes language-* class for hljs)
+  //.use(sanitize, {
+  //  ...defaultSchema,
+  //  attributes: {
+  //    ...defaultSchema.attributes,
+  //    code: [
+  //      ...(defaultSchema.attributes.code || []),
+  //      ['data-language'],
+  //      ['data-title'],
+  //    ]
+  //  }
+  //})
 
 /**
  * Convert markdown to HTML.
