@@ -181,6 +181,6 @@ function applyFilter(flt, key, val) {
         return !!flt(key, val)
     }
     if (flt instanceof Array) {
-        return flt.some(flt => filter(flt, key, val))
+        return flt.some(flt => applyFilter(flt, key, val))
     }
 }
