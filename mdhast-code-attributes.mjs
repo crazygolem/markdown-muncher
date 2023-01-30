@@ -119,7 +119,7 @@ export function parse(meta) {
  * @returns {Transformer}
  *  An MDAST transformer.
  */
-export default function metaToDataset(options) {
+export default function codeAttributes(options) {
     const {
         include = false,
         langAttr = 'language',
@@ -131,12 +131,17 @@ export default function metaToDataset(options) {
         if (!node.lang)
             return
 
-        // Documented in [mdast-util-to-hast]:
+        // Documented in `mdast-util-to-hast`'s [README]:
         //
         // > `node.data.hProperties` is mixed into the element’s properties
         //
+        // Note that the code block [handler] additionally copies over the
+        // `data.meta` attribute (and no other), wich is not documented, but it
+        // is not used by `rehype-stringify` when rendering to HTML.
         //
-        // [mdast-util-to-hast]: https://github.com/syntax-tree/mdast-util-to-hast#fields-on-nodes
+        //
+        // [README]: https://github.com/syntax-tree/mdast-util-to-hast#fields-on-nodes
+        // [handler]: https://github.com/syntax-tree/mdast-util-to-hast/blob/main/lib/handlers/code.js
         (node.data ??= {}).hProperties ??= {}
 
         // Set first, so it can be overridden if allowed by `include`
