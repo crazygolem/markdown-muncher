@@ -1,9 +1,9 @@
 import { unified } from 'unified'
-import parse from 'remark-parse'
+import toMdast from 'remark-parse'
 import gfm from 'remark-gfm'
-import codeAttributes from './mdhast-code-attributes.mjs'
-import rehype from 'remark-rehype'
-import html from 'rehype-stringify'
+import code from './handler-code-attributes.mjs'
+import toHast from 'remark-rehype'
+import toHtml from 'rehype-stringify'
 import sanitize, { defaultSchema } from 'rehype-sanitize'
 
 /**
@@ -11,11 +11,10 @@ import sanitize, { defaultSchema } from 'rehype-sanitize'
  * e.g. to register extra plugins.
  */
 export let processor = unified()
-  .use(parse)
+  .use(toMdast)
   .use(gfm)
-  .use(codeAttributes, { include: 'title' })
-  .use(rehype)
-  .use(html)
+  .use(toHast, { handlers: { code: code({ include: 'caption' }) }})
+  .use(toHtml)
   // TODO: fix and re-enable sanitization (removes language-* class for hljs)
   //.use(sanitize, {
   //  ...defaultSchema,

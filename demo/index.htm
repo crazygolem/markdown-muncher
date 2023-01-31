@@ -79,7 +79,7 @@
             padding-top: 40px;
         }
 
-        pre code[data-title] {
+        pre code[data-caption] {
             padding-bottom: 40px;
         }
 
@@ -95,10 +95,10 @@
             background: rgba(0, 0, 0, 0.03);
         }
 
-        pre code[data-title]::after {
+        pre code[data-caption]::after {
             position: absolute; /* break out from the line numbers */
             display: block;
-            content: attr(data-title);
+            content: attr(data-caption);
             bottom: 0;
             left: 0;
             right: 0;
@@ -166,10 +166,10 @@ The default muncher comes pre-configured with a few remark plugins to add
 support for non-standard but very common and helpful elements, like footnotes,
 tables, task list items and autolinks:
 
-| Plugin                  | Description                                        |
-|-------------------------|----------------------------------------------------|
-| `remark-gfm`            | Adds tables, tasks, autolinks, footnotes and more… |
-| `mdast-code-attributes` | Generates `data-*` attributes from info string     |
+| Plugin              | Description                                              |
+|---------------------|----------------------------------------------------------|
+| `remark-gfm`        | Adds tables, tasks, autolinks, footnotes and more…       |
+| `handler-code-info` | Adds support for parsing fenced code blocks' info string |
 
 
 This example page is further processed by [highligh.js] to enable syntax
@@ -178,13 +178,13 @@ slug to the full language's name in the rendered blocks' header.
 
 Below are a few examples:
 
-```js title=fibonacci
+```js caption=fibonacci
 function fib(n) {
   return n < 2 ? n : fib(n-1) + fib(n-2)
 }
 ```
 
-```lua title="bis repetita placent"
+```lua caption="bis repetita placent"
 function fib(n)
   return n < 2 and n or fib(n - 1) + fib(n - 2)
 end
