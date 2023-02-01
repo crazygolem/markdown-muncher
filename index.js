@@ -1,7 +1,7 @@
 import { unified } from 'unified'
 import toMdast from 'remark-parse'
 import gfm from 'remark-gfm'
-import code from './handler-code-attributes.mjs'
+import code from './handler-code-meta.mjs'
 import toHast from 'remark-rehype'
 import toHtml from 'rehype-stringify'
 import sanitize, { defaultSchema } from 'rehype-sanitize'

@@ -35,6 +35,7 @@
         table {
             border-collapse: collapse;
             margin: 1em auto;
+            border-bottom: 1.5px solid black;
         }
 
         table th,
@@ -57,18 +58,18 @@
 
     <!-- Code blocks' syntax highlighting with Highlight.js -->
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/stackoverflow-light.css">
     <style>
         /* Has lower specificity than Highligh.js', will style code blocks that
            have not been processed, e.g. if Highlight.js fails to load for some
-           reason. The style just so happens to match the selected hljs
-           stylesheed, only the code won't be highlighted. */
+           reason. The style just so happens (wink wink) to match the selected
+           hljs stylesheed. */
         pre code {
             display: block;
             overflow-x: auto;
             padding: 1em;
-            background: #f3f3f3;
-            color: #444;
+            background: #f6f6f6;
+            color: #2f3337;
         }
 
         pre:has(code[data-language]) {
@@ -76,41 +77,34 @@
         }
 
         pre code[data-language] {
-            padding-top: 40px;
+            padding-bottom: calc(11px + 2em);
         }
 
-        pre code[data-caption] {
-            padding-bottom: 40px;
-        }
-
-        pre code[data-language]::before {
+        pre code[data-language]::after {
             content: attr(data-language);
-            position: absolute; /* break out from the line numbers */
+
             display: block;
-            top: 0;
+            overflow-x: hidden;
+
+            position: absolute;
+            bottom: 5px;
             left: 0;
-            right: 0;
-            padding: 5px 0 5px 1em;
-            text-transform: uppercase;
-            background: rgba(0, 0, 0, 0.03);
+            right: 5px;
+
+            padding: 5px 0.5em 1px 1em;
+            background: white;
+
+            color: #284283;
+            font-size: small;
+            font-family: cursive;
         }
 
-        pre code[data-caption]::after {
-            position: absolute; /* break out from the line numbers */
-            display: block;
-            content: attr(data-caption);
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 5px 0 5px 1em;
-            font-size: small;
-            font-style: italic;
-            font-family: cursive;
-            background: rgba(0, 0, 0, 0.03);
+        pre code[data-language][data-caption]::after {
+            content: attr(data-language) '  —  ' attr(data-caption);
         }
     </style>
     <script type="module" defer>
-        import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/es/highlight.min.js';
+        import hljs from 'https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/+esm'
 
         hljs.configure({
             languages: [], // disables auto detection
@@ -166,21 +160,21 @@ The default muncher comes pre-configured with a few remark plugins to add
 support for non-standard but very common and helpful elements, like footnotes,
 tables, task list items and autolinks:
 
-| Plugin              | Description                                              |
-|---------------------|----------------------------------------------------------|
-| `remark-gfm`        | Adds tables, tasks, autolinks, footnotes and more…       |
-| `handler-code-info` | Adds support for parsing fenced code blocks' info string |
+| Plugin              | Description                                        |
+|---------------------|----------------------------------------------------|
+| `remark-gfm`        | Adds tables, tasks, autolinks, footnotes and more… |
+| `handler-code-meta` | Parses fenced code blocks' info string             |
 
 
-This example page is further processed by [highligh.js] to enable syntax
+This example page is further processed by [highlight.js] to enable syntax
 highlighting of fenced code blocks, with some extra code to update the language
-slug to the full language's name in the rendered blocks' header.
+slug to the full language's name in the rendered blocks' footer.
 
 Below are a few examples:
 
-```js caption=fibonacci
+```js caption=Fibonacci
 function fib(n) {
-  return n < 2 ? n : fib(n-1) + fib(n-2)
+  return n < 2 ? n : fib(n - 1) + fib(n - 2)
 }
 ```
 

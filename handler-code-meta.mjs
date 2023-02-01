@@ -71,6 +71,8 @@ import { defaultHandlers } from 'remark-rehype'
  * - Quoted: The value is quoted with single or double quotes, can contain any
  *   character except for the quote mark unless it is escaped with a backslash.
  *   Example: `foo="bar baz" quote="And he said \"lorem ipsum\"."`
+ * - Key only: There is no value, not even an equal sign.
+ *   Example: `foo bar` parses two attributes.
  *
  * The key must be a valid name suffix for an HTML `data-*` attribute. The rules
  * are a bit weird and depending on where you look they seem not entirely
@@ -98,7 +100,7 @@ import { defaultHandlers } from 'remark-rehype'
  */
 export function parse(meta) {
     // Notice the 'y' (sticky) flag
-    let re = /\s*(?<key>(?!xml)[a-z_][a-z0-9_.-]*)=(?:(?<q>["'])(?<qval>(?:(?<=\\)\k<q>|(?!\k<q>).)*)\k<q>|(?<uval>\S*))\s*/y
+    let re = /\s*(?<key>(?!xml)[a-z_][a-z0-9_.-]*)(?:=(?:(?<q>["'])(?<qval>(?:(?<=\\)\k<q>|(?!\k<q>).)*)\k<q>|(?<uval>\S*)))?\s*/y
 
     let attrs = []
     let lidx = 0
@@ -109,7 +111,7 @@ export function parse(meta) {
         lidx = re.lastIndex
         attrs.push({
             key: match.groups.key,
-            val: match.groups.qval ?? match.groups.uval,
+            val: match.groups.qval ?? match.groups.uval ?? '',
         })
     }
 
