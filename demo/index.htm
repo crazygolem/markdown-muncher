@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,16 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!--
-        Disclaimer: The author of this demo page declines and and all
+        Disclaimer: The author of this demo page declines any and all
         responsibility for damages to good taste and aesthetics.
     -->
 
     <style>
+        html {
+           box-sizing: border-box;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
         body {
-            box-sizing: border-box;
-            padding: 0 10%;
-            max-width: 130ch;
+            box-sizing: content-box;
+            padding: 0 1.5em;
+            max-width: min-content;
             margin: 0 auto;
+        }
+
+        body * {
+            box-sizing: border-box;
         }
 
         body script[type="text/markdown"] {
@@ -24,8 +36,9 @@
             white-space: pre;
             font-family: monospace;
 
-            margin-top: 5em;
-            padding: 0 1.5em;
+            margin: 5em auto 0;
+            padding: 0 1.5ch;
+            max-width: 83ch;
             background-color: lightyellow;
 
             overflow-x: auto;
