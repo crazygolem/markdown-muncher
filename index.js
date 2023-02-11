@@ -15,18 +15,17 @@ export let processor = unified()
   .use(gfm)
   .use(toHast, { handlers: { code: code({ include: 'caption' }) }})
   .use(toHtml)
-  // TODO: fix and re-enable sanitization (removes language-* class for hljs)
-  //.use(sanitize, {
-  //  ...defaultSchema,
-  //  attributes: {
-  //    ...defaultSchema.attributes,
-  //    code: [
-  //      ...(defaultSchema.attributes.code || []),
-  //      ['data-language'],
-  //      ['data-title'],
-  //    ]
-  //  }
-  //})
+  .use(sanitize, {
+    ...defaultSchema,
+    attributes: {
+      ...defaultSchema.attributes,
+      code: [
+        ...(defaultSchema.attributes.code || []),
+        ['className', /^lang(uage)?-\w+/],
+        'data*',
+      ]
+    }
+  })
 
 /**
  * Convert markdown to HTML.
