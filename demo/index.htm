@@ -21,14 +21,24 @@
         }
 
         body {
-            box-sizing: content-box;
-            padding: 0 1.5em;
-            max-width: min-content;
+            /* Same font parameters as the script block, such that setting width
+               in 'ch' units results in the same size. */
+            font-family: monospace;
+            max-width: 83ch;
+
             margin: 0 auto;
         }
 
-        body * {
-            box-sizing: border-box;
+        body > * {
+            font-family: initial;
+        }
+
+        body > * ~ * {
+            margin-top: 2em;
+        }
+
+        body section {
+            padding: 0 1.5em;
         }
 
         body script[type="text/markdown"] {
@@ -36,7 +46,8 @@
             white-space: pre;
             font-family: monospace;
 
-            margin: 0 auto;
+            margin-left: auto;
+            margin-right: auto;
             padding: 0 1.5ch;
             max-width: 83ch;
             background-color: lightyellow;
@@ -45,7 +56,6 @@
         }
 
         body script[type="text/markdown"].rendered {
-            margin-top: 5em;
             background-color: lightgreen;
         }
 
@@ -64,9 +74,15 @@
     <script type="module" defer>
         import process from '../dist/markdown-muncher.min.mjs'
 
-        document.querySelectorAll('script[type="text/markdown"').forEach((n) => {
-            process(n.textContent).then((html) => {
-                n.insertAdjacentHTML('beforebegin', html)
+        document.querySelectorAll('script[type="text/markdown"').forEach(n => {
+            process(n.textContent)
+            .then(html => {
+                let elt = document.createElement('section')
+                elt.innerHTML = html
+                return elt
+            })
+            .then(elt => {
+                n.insertAdjacentElement('beforebegin', elt)
                 n.classList.toggle('rendered', true)
             })
         })
