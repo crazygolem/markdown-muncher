@@ -4,7 +4,7 @@ import resolve from '@rollup/plugin-node-resolve'         // Resolve node depend
 import terser from '@rollup/plugin-terser'                // Minifier
 
 export default [{
-  input: 'index.js',
+  input: 'markdown-muncher.js',
   output: {
     file: 'dist/markdown-muncher.mjs',
     format: 'es',
