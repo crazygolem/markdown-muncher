@@ -1,7 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs'            // Remark depends on some CJS libraries
 import nodepolyfills from 'rollup-plugin-polyfill-node'   // Browser polyfills for node builtins
 import resolve from '@rollup/plugin-node-resolve'         // Resolve node dependencies from node_modules
-import json from '@rollup/plugin-json'                    // Convert .json files to ES6 modules
 import terser from '@rollup/plugin-terser'                // Minifier
 
 export default [{
@@ -11,7 +10,7 @@ export default [{
     format: 'es',
     compact: false,
   },
-  plugins: [commonjs(), nodepolyfills(), resolve({ preferBuiltins: false }), json()],
+  plugins: [commonjs(), nodepolyfills(), resolve({ preferBuiltins: false })],
 }, {
   input: 'dist/markdown-muncher.mjs',
   output: {
