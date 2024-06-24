@@ -4,29 +4,22 @@
   "description": "Bundles remark-parse and rehype as an ES6 module (ESM) to convert markdown to HTML in the browser",
   "main": "markdown-muncher.js",
   "scripts": {
-    "build": "bun run build.js",
-    "rollup-build": "npx rollup -c"
+    "build": "bun run build.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^24.0.1",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-terser": "^0.4.0",
-    "bun": "^1.0.0",
-    "humanize-duration": "^3.29.0",
+    "bun": "^1.1.16",
+    "humanize-duration": "^3.32.1",
     "pretty-bytes": "^6.1.1",
     "rehype-sanitize": "^5.0.1",
-    "rehype-stringify": "^9.0.3",
+    "rehype-stringify": "^9.0.4",
     "remark-gfm": "^3.0.1",
-    "remark-parse": "^10.0.1",
+    "remark-parse": "^10.0.2",
     "remark-rehype": "^10.1.0",
-    "rollup": "^3.11.0",
-    "rollup-plugin-polyfill-node": "^0.12.0",
     "unified": "^10.1.2",
     "unified-stream": "^2.0.0",
-    "unist-util-inspect": "^7.0.1",
+    "unist-util-inspect": "^7.0.2",
     "unist-util-visit": "^4.1.2"
   }
 }
