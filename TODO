@@ -1,0 +1,12 @@
+TODO:
+  ☐ Check remark-code-extra as replacement/inspiration for handler-code-meta
+    https://github.com/s0/remark-code-extra
+  ☐ Randomize a bit the top right corner shadow of code blocks
+    https://hypersphere.blog/blog/randomness-in-css-using-trigonometry/
+    https://github.com/w3c/csswg-drafts/issues/2826
+
+Interesting plugins:
+  ☐ remark-directive
+    https://github.com/remarkjs/remark-directive
+  ☐ remark-definition-list
+    https://github.com/wataru-chocola/remark-definition-list
