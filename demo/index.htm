@@ -74,7 +74,7 @@
     <script type="module" defer>
         import process from '../dist/markdown-muncher.min.mjs'
 
-        document.querySelectorAll('script[type="text/markdown"').forEach(n => {
+        document.querySelectorAll('script[type="text/markdown"]').forEach(n => {
             process(n.textContent)
             .then(html => {
                 let elt = document.createElement('section')
